@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+pre{
+  display: inline-block;
+  margin-left: 5px;
+}
+.box{
+  height: 100px;
+  width: 100px;
+  border: 1px solid #ccc;
+}
+
+.grand-father{
+  padding: 20px;
+  background-color: #ccc;
+}
+.father{
+  background-color: #999;
+  padding: 20px;
+}
+.son{
+  background-color: #333;
+  padding: 20px;
+  color: #fff;
+}
+
+.Uncle{
+  padding: 20px;
+  background-color: #666;
+  margin-left: 100px;
+}
+.father, .Uncle{
+  display: inline-block;
+  min-width: 400px;
+}
+
+.product-list li{
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+}
+.product-list li p {
+  display:  inline-block;
+  margin-right: 30px;
+}
+
+.count-wrapper{
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  height: 100px;
+  width: 100px;
+  background: green;
+  color: #fff;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+.box{
+  height: 100px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  width: 100%;
+}
+
+
+body{
+  background-color: #red;
+  height: 3000px;
+}
+
+
+
+.yy-dialog-mask{
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  z-index: 1000;
+}
+
+.yy-dialog{
+  background-color: #fff;
+  width: 200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2000;
+  top: 300px;
+}
