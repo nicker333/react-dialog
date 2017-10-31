@@ -59,7 +59,7 @@ class DialogHeader extends React.Component{
     }
     render(){
         return (
-            <header>
+            <header className='yy-dialog-header'>
                 <div>{this.props.Config.title}</div>
                 <button onClick={this.__handleClose} >x</button>
             </header>
@@ -108,7 +108,7 @@ class DialogContent extends React.Component{
     }
     render(){
         return (
-            <section>
+            <section className='yy-dialog-content'>
                 {this.state.content}
             </section>
         )
@@ -125,7 +125,7 @@ class DialogFooter extends React.Component{
     }
     render(){
         return (
-            <footer>
+            <footer className='yy-dialog-footer'>
                 {this.props.Config.buttons}
             </footer>
         )
@@ -140,41 +140,93 @@ class DialogFooter extends React.Component{
  class Dialog extends React.Component{
      constructor(){
          super();
+        
+         this.state = {
+            visible: false,
+            style: {
+                display: 'block'
+            }
+         }
          this.__id = +new Date();
+
+         this.closeDialog = this.closeDialog.bind(this);
+     }
+     
+     close(){
+        /**
+         * Hide the dialog.
+         */
+        this.setState(()=>{
+            return {
+                style: {
+                    display: 'none'
+                }
+            }
+        });
+     }
+     
+     remove(){
+        /**
+         * Remove the dialog dom from the page.
+         */
+        this.setState(()=>{
+            return {
+                visible: false
+            }
+        });
+     }
+     getDialog(){
+         /**
+          * Get the current dialog instance for that you can get the api.
+          */
+         return this;
+     }
+     componentWillMount(){
+        this.setState(()=>{
+            return {
+                visible: this.props.Config.globalConfig.visible
+            }
+        });
      }
      componentDidMount(){
         DialogCollection[this.__id] = this;
      }
-     componentWillMount(){
+     componentWillUnMount(){
         delete DialogCollection[this.__id];
      }
+     componentWillReceiveProps(nextProps){
+        this.setState(()=>{
+            return {
+                visible: nextProps.Config.globalConfig.visible
+            }
+        })
+     }
      render(){
+        
          const {globalConfig} = this.props.Config;
          const cls = this.props.className ? 'yy-dialog-wrapper ' + this.props.className: 'yy-dialog-wrapper';
          return (
-             <div id={'J_yy_dialog_'+ this.__id } className={cls}>
-                 
+             <div id={ 'J_yy_dialog_'+ this.__id } className={cls}>
                  {
-                     globalConfig.showMask
-                     ? <Mask />
+                     this.state.visible
+                     ? <div className='yy-dialog'>
+                            <DialogHeader
+                                Config={
+                                    this.props.Config.headerConfig
+                                }
+                            />  
+                            <DialogContent>
+                                {this.props.children}
+                            </DialogContent>
+        
+                            <DialogFooter
+                                Config={
+                                    this.props.Config.footerConfig
+                                }
+                            />
+                       </div>
                      : null
                  }
-                 <div className='yy-dialog'>
-                    <DialogHeader
-                        Config={
-                            this.props.Config.headerConfig
-                        }
-                    />  
-                    <DialogContent>
-                        {this.props.children}
-                    </DialogContent>
-
-                    <DialogFooter
-                        Config={
-                            this.props.Config.footerConfig
-                        }
-                    />
-                 </div>
              </div>
          )
      }
