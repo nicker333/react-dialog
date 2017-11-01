@@ -3,12 +3,16 @@ import {createPortal} from 'react-dom';
 import PropTypes from 'prop-types';
 
 const classPreFix = 'yy-dialog';
-const DialogCollection = {};
+const DialogCollection = [];
 const body = document.body;
 const KEY_CODE = {
     ESC: 27
 }
 const emptyFun = ()=>{};
+
+setInterval(()=>{
+    console.log(DialogCollection);
+}, 2000);
 
 /**
  * Dialog mask
@@ -17,14 +21,14 @@ const emptyFun = ()=>{};
 class Mask extends React.Component{
     constructor(){
         super();
-        this.closeDialog = this.closeDialog.bind(this);
+        //this.closeDialog = this.closeDialog.bind(this);
     }
     closeDialog = (e)=>{
-       this.props.closeDialog(e);
+       //this.props.closeDialog(e);
     }
     render(){
         return (
-            <div onClick={this.closeDialog} className={`${classPreFix}-mask`}></div>
+            <div className={`${classPreFix}-mask`}></div>
         )
     }
 
@@ -176,6 +180,7 @@ class DialogFooter extends React.Component{
         
      }
      componentDidMount = ()=>{
+        
          //
         //  document.on('touchmove', (e)=>{
         //     e.preventDefault();
@@ -290,6 +295,8 @@ class DialogFooter extends React.Component{
              return {
                 open: true
              }
+         }, ()=>{
+             DialogCollection.push(this);
          });
      }
      closeDialog = (e)=>{
@@ -313,6 +320,7 @@ class DialogFooter extends React.Component{
         this.props.afterCancel();
      }
      onKeyDown = (e) =>{
+         alert(123);
          if(e.keyCode !== KEY_CODE.ESC) return;
          this.closeDialog(e);
      }
@@ -324,11 +332,8 @@ class DialogFooter extends React.Component{
                      this.createMaskElem()
                  }
                  {
-                     this.state.open
-                    //  ? <div 
-                    //         onKeyDown={this.onKeyDown}
-                    //         className={`${classPreFix}`}
-                    //     >
+                    //this.state.open
+                    //  ? <div onKeyDown={this.onKeyDown} className={`${classPreFix}`} >
                     //         {
                     //             this.createDialogHeaderElem(this.props.headerConfg)
                     //         }
@@ -341,8 +346,10 @@ class DialogFooter extends React.Component{
                             
                     //    </div>
                     //  : null
-                    ? <div>234</div>
-                    : null
+                     this.state.open
+                     ? <h3 onKeyDown={this.onKeyDown} >24234</h3>
+                     : null
+                    
                  }
              </div>,
              this._portalNode
