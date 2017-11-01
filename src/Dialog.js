@@ -68,14 +68,11 @@ class DialogContent extends React.Component{
     }
 
     static propTypes = {
-        showMask: PropTypes.bool,
-        quickClose: PropTypes.bool
+        showMask: PropTypes.bool
     }
 
     static defaultProps = {
         showMask: true,
-        quickClose: true,
-
     }
 
     componentWillMount(){
@@ -152,34 +149,31 @@ class DialogFooter extends React.Component{
  class Dialog extends React.Component{
      constructor(){
          super();
-         
          this.state = {
-            open: false,
-            display: 'block'
+            open: false
          }
          this._id = +new Date();
          this.eventHandle.bind(this)();
         
      }
      eventHandle = ()=>{
-        this.onKeyDown               = this.onKeyDown.bind(this);
-        this.cancel                  = this.cancel.bind(this);
+        
         this.createMaskElem          = this.createMaskElem.bind(this);
         this.createDialogHeaderElem  = this.createDialogHeaderElem.bind(this);
         this.createDialogContentElem = this.createDialogContentElem.bind(this);
         this.createDialogFooterElem  = this.createDialogFooterElem.bind(this);
+        this.onKeyDown               = this.onKeyDown.bind(this);
+        this.cancel                  = this.cancel.bind(this);
+
+        this.openDialog              = this.openDialog.bind(this);
+        this.closeDialog             = this.closeDialog.bind(this);
+        this.showDialog              = this.showDialog.bind(this);
         this.getDialogContainer.bind(this)();
 
      }
      componentWillMount = ()=>{
          
-        // this.setState(()=>{
-        //     return {
-        //         visible: this.props.visible
-        //     }
-        // }, ()=>{
-        //     console.log(this.state);
-        // });
+        
      }
      componentDidMount = ()=>{
          //
@@ -192,20 +186,22 @@ class DialogFooter extends React.Component{
         //  })
      }
      componentWillUnmount = ()=>{
-         this._portalNode
+         //console.log('un mount');
+        // this._portalNode
         //this._portalNode.parentNode.removeChild(this._portalNode);
      }
      componentWillReceiveProps = (nextProps)=>{
-        document.body.appendChild(this._portalNode);
-        this.setState(()=>{
-            return {
-                open: nextProps.open
-            }
-        }, ()=>{
-            if(this.props.fixed){
-                document.body.style.overflow = 'hidden';
-            }
-        });
+        
+       
+        if(!this.props.open && nextProps.open){
+            //创建Dialog UI元素
+            this.openDialog();
+        }else if(this.props.open && nextProps.open){
+            //默认关闭Dialog只是设置{display: 'none'}
+            //当再次打开时候只设置{display: 'block'}
+            this.showDialog();
+        }
+        
      }
 
      static defaultProps = {
@@ -213,7 +209,7 @@ class DialogFooter extends React.Component{
          afterClose     : emptyFun,
          afterCancel    : emptyFun,
          afterDestroy   : emptyFun,
-         open        : false,
+         open           : false,
          showMask       : true,
          quickClose     : true,
          classPreFix    : 'yy-dialog'
@@ -236,7 +232,7 @@ class DialogFooter extends React.Component{
          afterClose     : PropTypes.func,
          afterCancel    : PropTypes.func,
          afterDestory   : PropTypes.func,
-         open        : PropTypes.bool,
+         open           : PropTypes.bool.isRequired,
          showMask       : PropTypes.bool,
          quickClose     : PropTypes.bool,
          classPreFix    : PropTypes.string
@@ -252,7 +248,7 @@ class DialogFooter extends React.Component{
      }
      getDialogContainer = ()=>{
          let container = document.createElement('div');
-             container.id = 'J_potal_mount_node_'+this._id;
+             container.id = 'J_portal_mount_node_'+this._id;
              this._portalNode = container;
      }
      createDialogHeaderElem = (headerConfig)=>{
@@ -288,60 +284,65 @@ class DialogFooter extends React.Component{
             : null
         )
      }
+     openDialog = () =>{
+         this.setState(()=>{
+             document.body.appendChild(this._portalNode)
+             return {
+                open: true
+             }
+         });
+     }
      closeDialog = (e)=>{
-        const {destory} = this.props;
-        let   prop;
-        let   value;
         this.setState(()=>{
-            if(destory){
-                return {
-                    'open' : false
-                }
-            }else{
-                return {
-                    'display': 'none'
-                }
+            return {
+                display: 'none'
             }
-            
         }, ()=>{
             if(this.props.fixed) document.body.style.overflow = 'auto';
         });
-        
+     }
+     showDialog = (e)=>{
+         this.setState(()=>{
+             return {
+                 display: 'block'
+             }
+         });
      }
      cancel = (e) =>{
         this.closeDialog();
         this.props.afterCancel();
      }
      onKeyDown = (e) =>{
-         if(e.keyCode != KEY_CODE.ESC) return;
+         if(e.keyCode !== KEY_CODE.ESC) return;
          this.closeDialog(e);
      }
      render(){
          const cls = this.props.className ? `${classPreFix}-wrapper ` + this.props.className: `${classPreFix}-wrapper`;
          return createPortal(
-             <div id={ 'dialog_'+ this._id } className={cls}>
-                 {this.createMaskElem()}
+             <div id={ 'dialog_'+ this._id } style={{ display : this.state.display}} className={cls}>
+                 {
+                     this.createMaskElem()
+                 }
                  {
                      this.state.open
-                     ? <div 
-                            onKeyDown={this.onKeyDown}
-                            style={{'display': this.state.display}}
-                            className={`${classPreFix}`}
-                        >
-                            <div className={`${classPreFix}-instance`}>
-                                {
-                                    this.createDialogHeaderElem(this.props.headerConfg)
-                                }
-                                {
-                                    this.createDialogContentElem()
-                                }
-                                {
-                                    this.createDialogFooterElem(this.props.footerConfig)
-                                }
-                            </div>
+                    //  ? <div 
+                    //         onKeyDown={this.onKeyDown}
+                    //         className={`${classPreFix}`}
+                    //     >
+                    //         {
+                    //             this.createDialogHeaderElem(this.props.headerConfg)
+                    //         }
+                    //         {
+                    //             this.createDialogContentElem()
+                    //         }
+                    //         {
+                    //             this.createDialogFooterElem(this.props.footerConfig)
+                    //         }
                             
-                       </div>
-                     : null
+                    //    </div>
+                    //  : null
+                    ? <div>234</div>
+                    : null
                  }
              </div>,
              this._portalNode

@@ -111,3 +111,13 @@ body{
   position: relative;
   z-index: 3000;
 }
+
+.btn{
+  position: absolute;
+  top: 100px;
+  left: 0;
+  z-index: 3000;
+}
+.btn2{
+  top: 140px;
+}
