@@ -5,7 +5,7 @@ const classPreFix = 'yy-dialog';
 const DialogCollection = {};
 const KEY_CODE = {
     ESC: 27
-};
+}
 const emptyFun = ()=>{};
 
 /**
