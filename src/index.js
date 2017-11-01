@@ -65,7 +65,6 @@ class Demo extends React.Component{
                }
                
             >
-                <input type='text' autoFocus />
                 <ul>
                     <li>123213</li>
                     <li>123213</li>

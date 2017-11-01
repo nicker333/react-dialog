@@ -172,6 +172,7 @@ class DialogFooter extends React.Component{
 
      }
      componentWillMount = ()=>{
+         
         // this.setState(()=>{
         //     return {
         //         visible: this.props.visible
@@ -182,17 +183,28 @@ class DialogFooter extends React.Component{
      }
      componentDidMount = ()=>{
          //
+        //  document.on('touchmove', (e)=>{
+        //     e.preventDefault();
+        //  })
+        //  document.addEventListener('touchmove', (e)=>{
+        //      console.log(123);
+        //     e.preventDefault();
+        //  })
      }
      componentWillUnmount = ()=>{
+         this._portalNode
         //this._portalNode.parentNode.removeChild(this._portalNode);
      }
      componentWillReceiveProps = (nextProps)=>{
+        document.body.appendChild(this._portalNode);
         this.setState(()=>{
             return {
                 open: nextProps.open
             }
         }, ()=>{
-            if(this.props.fixed) document.body.style.overflow = 'hidden';
+            if(this.props.fixed){
+                document.body.style.overflow = 'hidden';
+            }
         });
      }
 
@@ -241,8 +253,7 @@ class DialogFooter extends React.Component{
      getDialogContainer = ()=>{
          let container = document.createElement('div');
              container.id = 'J_potal_mount_node_'+this._id;
-         body.appendChild(container);
-         this._portalNode = container;
+             this._portalNode = container;
      }
      createDialogHeaderElem = (headerConfig)=>{
         return (
