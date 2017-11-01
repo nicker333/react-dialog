@@ -91,3 +91,10 @@ body{
   z-index: 2000;
   top: 300px;
 }
+
+.yy-dialog-instance{
+  background-color: #fff;
+  padding: 10px;
+  position: relative;
+  z-index: 3000;
+}

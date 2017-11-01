@@ -17,34 +17,44 @@ class Demo extends React.Component{
             visible: false
         }
         this.showDialog = this.showDialog.bind(this);
+        this.afterCancel = this.afterCancel.bind(this);
     }
     showDialog(){
-        this.setState(()=>{
+        this.setState((prevState)=>{
             return {
                 visible: true
             }
         });
+    }
+    afterCancel(){
+        alert(123);
     }
     render(){
        return (
         <div>
             <button onClick={this.showDialog}>show dialog</button>
             <Dialog 
-                Config={{
-                    globalConfig: {
-                        showMask:true,
-                        visible: this.state.visible
-                    },
-                    headerConfig: {
-                        title: 'dialog标题'
-                    },
-                    footerConfig: {
-                        buttons: [
-                            <button  key='cancel'>取消</button>,
-                            <button key='confim'>确定</button>
-                        ]
-                    }
-                }}
+               afterCancel = {this.afterCancel}
+               visible = {this.state.visible}
+               fixed = {true}
+               dialogStyle = {
+                   {
+                       width: '500px'
+                   }
+               }
+               headerConfg = {
+                   {
+                       title: '弹窗标题'
+                   }
+               }
+               footerConfig = {
+                   {
+                       buttons: [
+                           <button align='center'>确定</button>
+                       ]
+                   }
+               }
+               
             >
                 <input type='text' autoFocus />
                 <p>老子要造最好用的react dialog</p>

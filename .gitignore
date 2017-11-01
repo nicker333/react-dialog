@@ -9,15 +9,6 @@
 # production
 /build
 
-/src/c.js
-/src/component*.js
-/src/DataAndDom.js
-/src/E*.js
-/src/JSX*.js
-/src/life*.js
-/src/product*.js
-
-
 # misc
 .DS_Store
 .env.local

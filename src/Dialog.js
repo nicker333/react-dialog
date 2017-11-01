@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const classPreFix = '';
+const classPreFix = 'yy-dialog';
 const DialogCollection = {};
 
-setInterval(()=>{
-    console.log(DialogCollection);
-}, 2000)
 
+
+const emptyFun = ()=>{
+
+}
+const KEY_CODE = {
+    ESC: 27
+}
 /**
  * Dialog mask
  * 
@@ -15,10 +19,14 @@ setInterval(()=>{
 class Mask extends React.Component{
     constructor(){
         super();
+        this.__closeDialog = this.__closeDialog.bind(this);
+    }
+    __closeDialog = (e)=>{
+       this.props.closeDialog(e);
     }
     render(){
         return (
-            <div className='yy-dialog-mask'></div>
+            <div onClick={this.__closeDialog} className={`${classPreFix}-mask`}></div>
         )
     }
 
@@ -33,34 +41,19 @@ class Mask extends React.Component{
 class DialogHeader extends React.Component{
     constructor(){
         super();
-        this.__eventHandler.bind(this)();
-    }
-    
-    static propTypes = {
-        title: PropTypes.oneOf(
-            [
-                PropTypes.string,
-                false
-            ]
-        ),
-        showCloseBtn: PropTypes.bool
-    }
-
-    static defaultProps = {
-        title: '',
-        showCloseBtn: true
+        //this.__eventHandler.bind(this)();
     }
 
     __eventHandler(){
         this.__handleClose = this.__handleClose.bind(this);
     }
     __handleClose(){
-        alert(123);
+       // alert(123);
     }
     render(){
         return (
-            <header className='yy-dialog-header'>
-                <div>{this.props.Config.title}</div>
+            <header className={`${classPreFix}-header`}>
+                <div>{this.props.title}</div>
                 <button onClick={this.__handleClose} >x</button>
             </header>
         )
@@ -108,7 +101,7 @@ class DialogContent extends React.Component{
     }
     render(){
         return (
-            <section className='yy-dialog-content'>
+            <section className={`${classPreFix}-content`}>
                 {this.state.content}
             </section>
         )
@@ -122,11 +115,36 @@ class DialogContent extends React.Component{
 class DialogFooter extends React.Component{
     constructor(){
         super();
+        this.__cancelHandle = this.__cancelHandle.bind(this);
+        this.__confirmHandle = this.__confirmHandle.bind(this);
+    }
+    static defaultProps = {
+        showFooterBtns: true
+    }
+    componentWillMount(){
+        
+    }
+    __cancelHandle = (e) =>{
+        this.props.cancel(e);
+    }
+    __confirmHandle = () =>{
+        
+    }
+    __renderBtns = ()=>{
+        if(this.props.buttons) {
+            return this.props.buttons;
+        }
+        return (
+            <div>
+                <button key='cancel' onClick={this.__cancelHandle} >取消</button>
+                <button key='confirm' >确定</button>
+            </div>
+        )
     }
     render(){
         return (
-            <footer className='yy-dialog-footer'>
-                {this.props.Config.buttons}
+            <footer className={`${classPreFix}-footer`}>
+                {this.__renderBtns()}
             </footer>
         )
     }
@@ -140,90 +158,155 @@ class DialogFooter extends React.Component{
  class Dialog extends React.Component{
      constructor(){
          super();
-        
+         
          this.state = {
-            visible: false,
-            style: {
-                display: 'block'
-            }
+            visible: false
          }
          this.__id = +new Date();
+         this.onKeyDown = this.onKeyDown.bind(this);
+         this.cancel = this.cancel.bind(this);
+         this.createMaskElem = this.createMaskElem.bind(this);
+         this.createDialogHeaderElem = this.createDialogHeaderElem.bind(this);
+         this.createDialogContentElem = this.createDialogContentElem.bind(this);
+         this.createDialogFooterElem = this.createDialogFooterElem.bind(this);
 
-         this.closeDialog = this.closeDialog.bind(this);
      }
      
-     close(){
-        /**
-         * Hide the dialog.
-         */
+     componentWillMount = ()=>{
+        // this.setState(()=>{
+        //     return {
+        //         visible: this.props.visible
+        //     }
+        // }, ()=>{
+        //     console.log(this.state);
+        // });
+     }
+     componentDidMount = ()=>{
+         //
+     }
+     componentWillReceiveProps = (nextProps)=>{
         this.setState(()=>{
             return {
-                style: {
-                    display: 'none'
-                }
+                visible: nextProps.visible
             }
+        }, ()=>{
+            if(this.props.fixed) document.body.style.overflow = 'hidden';
         });
      }
-     
-     remove(){
-        /**
-         * Remove the dialog dom from the page.
-         */
+
+     static defaultProps = {
+         afterOpen: emptyFun,
+         afterClose: emptyFun,
+         afterCancel: emptyFun,
+         afterDestroy: emptyFun,
+         visible: false,
+         showMask: true,
+         quickClose: true,
+         classPreFix: 'yy-dialog',
+        //  headerConfg: {
+        //      showHeader: true,
+        //      title: '',
+        //      showCloseBtn: true
+        //  },
+        //  footerConfig: {
+        //      showFooterBtns: true,
+        //      buttons: [
+        //         <button key='cancel'>取消</button>,
+        //         <button key='confirm' >确定</button>
+        //      ]
+        //  }
+     }
+
+     static propTypes = {
+         afterOpen: PropTypes.func,
+         afterClose: PropTypes.func,
+         afterCancel: PropTypes.func,
+         afterDestory: PropTypes.func,
+         visible: PropTypes.bool,
+         showMask: PropTypes.bool,
+         quickClose: PropTypes.bool,
+         classPreFix: PropTypes.string
+        //  headerConfg: {
+        //      showHeader: PropTypes.bool,
+        //      title: PropTypes.string,
+        //      showCloseBtn: PropTypes.bool
+        //  },
+        //  footerConfig: {
+        //      showFooterBtns: PropTypes.bool,
+        //      buttons: PropTypes.array
+        //  }
+     }
+     createDialogHeaderElem = (headerConfig)=>{
+        return (
+            <DialogHeader
+                title = {
+                    headerConfig.title
+                }
+            />  
+        )
+     }
+     createDialogContentElem = ()=>{
+         return (
+            <DialogContent>
+                {this.props.children}
+            </DialogContent>
+         )
+     }
+     createDialogFooterElem = ()=>{
+        return (
+            <DialogFooter
+              cancel = {this.cancel}
+            >
+            
+            </DialogFooter>
+        )
+     }
+     createMaskElem = ()=>{
+        return (
+            this.state.visible && this.props.showMask
+            ? <Mask closeDialog={this.closeDialog} />
+            : null
+        )
+     }
+     closeDialog = (e)=>{
+        //const {quickClose} = this.props;
         this.setState(()=>{
             return {
                 visible: false
             }
+        }, ()=>{
+            if(this.props.fixed) document.body.style.overflow = 'auto';
         });
+        
      }
-     getDialog(){
-         /**
-          * Get the current dialog instance for that you can get the api.
-          */
-         return this;
+     cancel = (e) =>{
+        this.closeDialog();
+        this.props.afterCancel();
      }
-     componentWillMount(){
-        this.setState(()=>{
-            return {
-                visible: this.props.Config.globalConfig.visible
-            }
-        });
-     }
-     componentDidMount(){
-        DialogCollection[this.__id] = this;
-     }
-     componentWillUnMount(){
-        delete DialogCollection[this.__id];
-     }
-     componentWillReceiveProps(nextProps){
-        this.setState(()=>{
-            return {
-                visible: nextProps.Config.globalConfig.visible
-            }
-        })
+     onKeyDown = (e) =>{
+         if(e.keyCode != KEY_CODE.ESC) return;
+         this.closeDialog(e);
      }
      render(){
-        
-         const {globalConfig} = this.props.Config;
-         const cls = this.props.className ? 'yy-dialog-wrapper ' + this.props.className: 'yy-dialog-wrapper';
+         const cls = this.props.className ? `${classPreFix}-wrapper ` + this.props.className: `${classPreFix}-wrapper`;
          return (
-             <div id={ 'J_yy_dialog_'+ this.__id } className={cls}>
+             <div id={ 'dialog_'+ this.__id } className={cls}>
+                 {this.createMaskElem()}
                  {
                      this.state.visible
-                     ? <div className='yy-dialog'>
-                            <DialogHeader
-                                Config={
-                                    this.props.Config.headerConfig
+                     ? <div onKeyDown={this.onKeyDown} style={this.props.dialogStyle} className={`${classPreFix}`}>
+                            <div className={`${classPreFix}-instance`}>
+                                {
+                                    this.createDialogHeaderElem(this.props.headerConfg)
                                 }
-                            />  
-                            <DialogContent>
-                                {this.props.children}
-                            </DialogContent>
-        
-                            <DialogFooter
-                                Config={
-                                    this.props.Config.footerConfig
+                                {
+                                    this.createDialogContentElem()
                                 }
-                            />
+                                {
+                                    this.createDialogFooterElem(this.props.footerConfig)
+                                }
+                            </div>
+                            
                        </div>
                      : null
                  }
