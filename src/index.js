@@ -44,7 +44,7 @@ class Demo extends React.Component{
                }
                headerConfg = {
                    {
-                       title: '弹窗标题'
+                       title: <p><h2>标题</h2>注意事项</p>
                    }
                }
                footerConfig = {

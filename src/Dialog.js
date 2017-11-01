@@ -3,15 +3,11 @@ import PropTypes from 'prop-types';
 
 const classPreFix = 'yy-dialog';
 const DialogCollection = {};
-
-
-
-const emptyFun = ()=>{
-
-}
 const KEY_CODE = {
     ESC: 27
-}
+};
+const emptyFun = ()=>{};
+
 /**
  * Dialog mask
  * 
