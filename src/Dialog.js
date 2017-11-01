@@ -1,8 +1,10 @@
 import React from 'react';
+import {createPortal} from 'react-dom';
 import PropTypes from 'prop-types';
 
 const classPreFix = 'yy-dialog';
 const DialogCollection = {};
+const body = document.body;
 const KEY_CODE = {
     ESC: 27
 }
@@ -15,14 +17,14 @@ const emptyFun = ()=>{};
 class Mask extends React.Component{
     constructor(){
         super();
-        this.__closeDialog = this.__closeDialog.bind(this);
+        this.closeDialog = this.closeDialog.bind(this);
     }
-    __closeDialog = (e)=>{
+    closeDialog = (e)=>{
        this.props.closeDialog(e);
     }
     render(){
         return (
-            <div onClick={this.__closeDialog} className={`${classPreFix}-mask`}></div>
+            <div onClick={this.closeDialog} className={`${classPreFix}-mask`}></div>
         )
     }
 
@@ -152,9 +154,10 @@ class DialogFooter extends React.Component{
          super();
          
          this.state = {
-            visible: false
+            open: false,
+            display: 'block'
          }
-         this.__id = +new Date();
+         this._id = +new Date();
          this.eventHandle.bind(this)();
         
      }
@@ -165,6 +168,7 @@ class DialogFooter extends React.Component{
         this.createDialogHeaderElem  = this.createDialogHeaderElem.bind(this);
         this.createDialogContentElem = this.createDialogContentElem.bind(this);
         this.createDialogFooterElem  = this.createDialogFooterElem.bind(this);
+        this.getDialogContainer.bind(this)();
 
      }
      componentWillMount = ()=>{
@@ -179,10 +183,13 @@ class DialogFooter extends React.Component{
      componentDidMount = ()=>{
          //
      }
+     componentWillUnmount = ()=>{
+        //this._portalNode.parentNode.removeChild(this._portalNode);
+     }
      componentWillReceiveProps = (nextProps)=>{
         this.setState(()=>{
             return {
-                visible: nextProps.visible
+                open: nextProps.open
             }
         }, ()=>{
             if(this.props.fixed) document.body.style.overflow = 'hidden';
@@ -194,7 +201,7 @@ class DialogFooter extends React.Component{
          afterClose     : emptyFun,
          afterCancel    : emptyFun,
          afterDestroy   : emptyFun,
-         visible        : false,
+         open        : false,
          showMask       : true,
          quickClose     : true,
          classPreFix    : 'yy-dialog'
@@ -217,7 +224,7 @@ class DialogFooter extends React.Component{
          afterClose     : PropTypes.func,
          afterCancel    : PropTypes.func,
          afterDestory   : PropTypes.func,
-         visible        : PropTypes.bool,
+         open        : PropTypes.bool,
          showMask       : PropTypes.bool,
          quickClose     : PropTypes.bool,
          classPreFix    : PropTypes.string
@@ -230,6 +237,12 @@ class DialogFooter extends React.Component{
         //      showFooterBtns: PropTypes.bool,
         //      buttons: PropTypes.array
         //  }
+     }
+     getDialogContainer = ()=>{
+         let container = document.createElement('div');
+             container.id = 'J_potal_mount_node_'+this._id;
+         body.appendChild(container);
+         this._portalNode = container;
      }
      createDialogHeaderElem = (headerConfig)=>{
         return (
@@ -259,17 +272,26 @@ class DialogFooter extends React.Component{
      }
      createMaskElem = ()=>{
         return (
-            this.state.visible && this.props.showMask
+            this.state.open && this.props.showMask
             ? <Mask closeDialog={this.closeDialog} />
             : null
         )
      }
      closeDialog = (e)=>{
-        //const {quickClose} = this.props;
+        const {destory} = this.props;
+        let   prop;
+        let   value;
         this.setState(()=>{
-            return {
-                visible: false
+            if(destory){
+                return {
+                    'open' : false
+                }
+            }else{
+                return {
+                    'display': 'none'
+                }
             }
+            
         }, ()=>{
             if(this.props.fixed) document.body.style.overflow = 'auto';
         });
@@ -285,12 +307,16 @@ class DialogFooter extends React.Component{
      }
      render(){
          const cls = this.props.className ? `${classPreFix}-wrapper ` + this.props.className: `${classPreFix}-wrapper`;
-         return (
-             <div id={ 'dialog_'+ this.__id } className={cls}>
+         return createPortal(
+             <div id={ 'dialog_'+ this._id } className={cls}>
                  {this.createMaskElem()}
                  {
-                     this.state.visible
-                     ? <div onKeyDown={this.onKeyDown} style={this.props.dialogStyle} className={`${classPreFix}`}>
+                     this.state.open
+                     ? <div 
+                            onKeyDown={this.onKeyDown}
+                            style={{'display': this.state.display}}
+                            className={`${classPreFix}`}
+                        >
                             <div className={`${classPreFix}-instance`}>
                                 {
                                     this.createDialogHeaderElem(this.props.headerConfg)
@@ -306,7 +332,9 @@ class DialogFooter extends React.Component{
                        </div>
                      : null
                  }
-             </div>
+             </div>,
+             this._portalNode
+
          )
      }
  }

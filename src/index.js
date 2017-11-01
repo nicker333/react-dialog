@@ -14,7 +14,7 @@ class Demo extends React.Component{
     constructor(){
         super();
         this.state = {
-            visible: false
+            open: false
         }
         this.showDialog = this.showDialog.bind(this);
         this.afterCancel = this.afterCancel.bind(this);
@@ -22,7 +22,7 @@ class Demo extends React.Component{
     showDialog(){
         this.setState((prevState)=>{
             return {
-                visible: true
+                open: true
             }
         });
     }
@@ -30,12 +30,23 @@ class Demo extends React.Component{
         alert(123);
     }
     render(){
+       /**
+        * afterCancel  : 关闭弹窗后callback           type: function
+        * open         : 是否打开dialog               type: bool
+        * destory      : 关闭弹窗是否销毁DOM           type: 
+        * fixed        : 打开弹窗后是否允许页面滚动
+        * headerConfg  : 弹窗header配置
+        * footerConfig : 弹窗footer配置
+        *
+        *
+        */
        return (
         <div>
             <button onClick={this.showDialog}>show dialog</button>
             <Dialog 
                afterCancel = {this.afterCancel}
-               visible = {this.state.visible}
+               open = {this.state.open}
+               destory = {true}
                fixed = {true}
                dialogStyle = {
                    {
@@ -44,7 +55,7 @@ class Demo extends React.Component{
                }
                headerConfg = {
                    {
-                       title: <p><h2>标题</h2>注意事项</p>
+                       title: '标题'
                    }
                }
                footerConfig = {
