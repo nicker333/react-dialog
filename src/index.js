@@ -49,17 +49,20 @@ class Demo extends React.Component{
                }
                footerConfig = {
                    {
-                       buttons: [
-                           <button align='center'>确定</button>
-                       ]
+                      
                    }
                }
                
             >
                 <input type='text' autoFocus />
-                <p>老子要造最好用的react dialog</p>
-                <p>老子要造最好用的react dialog</p>
-                <p>老子要造最好用的react dialog</p>
+                <ul>
+                    <li>123213</li>
+                    <li>123213</li>
+                    <li>123213</li>
+                    <li>123213</li>
+                    <li>123213</li>
+                    <li>123213</li>
+                </ul>
             </Dialog>
          </div>
        )

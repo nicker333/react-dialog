@@ -41,20 +41,16 @@ class Mask extends React.Component{
 class DialogHeader extends React.Component{
     constructor(){
         super();
-        //this.__eventHandler.bind(this)();
+        this.closeDialog = this.closeDialog.bind(this);
     }
-
-    __eventHandler(){
-        this.__handleClose = this.__handleClose.bind(this);
-    }
-    __handleClose(){
-       // alert(123);
+    closeDialog = (e)=>{
+        this.props.closeDialog(e);
     }
     render(){
         return (
             <header className={`${classPreFix}-header`}>
                 <div>{this.props.title}</div>
-                <button onClick={this.__handleClose} >x</button>
+                <button className={`${classPreFix}-close-btn`} onClick={this.closeDialog} >x</button>
             </header>
         )
     }
@@ -115,7 +111,7 @@ class DialogContent extends React.Component{
 class DialogFooter extends React.Component{
     constructor(){
         super();
-        this.__cancelHandle = this.__cancelHandle.bind(this);
+        this.__cancelHandle  = this.__cancelHandle.bind(this);
         this.__confirmHandle = this.__confirmHandle.bind(this);
     }
     static defaultProps = {
@@ -136,8 +132,8 @@ class DialogFooter extends React.Component{
         }
         return (
             <div>
-                <button key='cancel' onClick={this.__cancelHandle} >取消</button>
-                <button key='confirm' >确定</button>
+                <button  key='cancel' onClick={this.__cancelHandle} >取消</button>
+                <button  key='confirm' >确定</button>
             </div>
         )
     }
@@ -163,15 +159,18 @@ class DialogFooter extends React.Component{
             visible: false
          }
          this.__id = +new Date();
-         this.onKeyDown = this.onKeyDown.bind(this);
-         this.cancel = this.cancel.bind(this);
-         this.createMaskElem = this.createMaskElem.bind(this);
-         this.createDialogHeaderElem = this.createDialogHeaderElem.bind(this);
-         this.createDialogContentElem = this.createDialogContentElem.bind(this);
-         this.createDialogFooterElem = this.createDialogFooterElem.bind(this);
+         this.eventHandle.bind(this)();
+        
+     }
+     eventHandle = ()=>{
+        this.onKeyDown               = this.onKeyDown.bind(this);
+        this.cancel                  = this.cancel.bind(this);
+        this.createMaskElem          = this.createMaskElem.bind(this);
+        this.createDialogHeaderElem  = this.createDialogHeaderElem.bind(this);
+        this.createDialogContentElem = this.createDialogContentElem.bind(this);
+        this.createDialogFooterElem  = this.createDialogFooterElem.bind(this);
 
      }
-     
      componentWillMount = ()=>{
         // this.setState(()=>{
         //     return {
@@ -195,14 +194,14 @@ class DialogFooter extends React.Component{
      }
 
      static defaultProps = {
-         afterOpen: emptyFun,
-         afterClose: emptyFun,
-         afterCancel: emptyFun,
-         afterDestroy: emptyFun,
-         visible: false,
-         showMask: true,
-         quickClose: true,
-         classPreFix: 'yy-dialog',
+         afterOpen      : emptyFun,
+         afterClose     : emptyFun,
+         afterCancel    : emptyFun,
+         afterDestroy   : emptyFun,
+         visible        : false,
+         showMask       : true,
+         quickClose     : true,
+         classPreFix    : 'yy-dialog'
         //  headerConfg: {
         //      showHeader: true,
         //      title: '',
@@ -218,14 +217,14 @@ class DialogFooter extends React.Component{
      }
 
      static propTypes = {
-         afterOpen: PropTypes.func,
-         afterClose: PropTypes.func,
-         afterCancel: PropTypes.func,
-         afterDestory: PropTypes.func,
-         visible: PropTypes.bool,
-         showMask: PropTypes.bool,
-         quickClose: PropTypes.bool,
-         classPreFix: PropTypes.string
+         afterOpen      : PropTypes.func,
+         afterClose     : PropTypes.func,
+         afterCancel    : PropTypes.func,
+         afterDestory   : PropTypes.func,
+         visible        : PropTypes.bool,
+         showMask       : PropTypes.bool,
+         quickClose     : PropTypes.bool,
+         classPreFix    : PropTypes.string
         //  headerConfg: {
         //      showHeader: PropTypes.bool,
         //      title: PropTypes.string,
@@ -242,6 +241,7 @@ class DialogFooter extends React.Component{
                 title = {
                     headerConfig.title
                 }
+                closeDialog = {this.closeDialog}
             />  
         )
      }
@@ -256,8 +256,8 @@ class DialogFooter extends React.Component{
         return (
             <DialogFooter
               cancel = {this.cancel}
+              buttons = {this.props.footerConfig.buttons}
             >
-            
             </DialogFooter>
         )
      }
