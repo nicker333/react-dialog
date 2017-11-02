@@ -21,14 +21,15 @@ setInterval(()=>{
 class Mask extends React.Component{
     constructor(){
         super();
-        //this.closeDialog = this.closeDialog.bind(this);
+        this.closeDialog = this.closeDialog.bind(this);
     }
     closeDialog = (e)=>{
-       //this.props.closeDialog(e);
+       if(!this.props.quickClose) return;
+       this.props.closeDialog(e);
     }
     render(){
         return (
-            <div className={`${classPreFix}-mask`}></div>
+            <div onClick={this.closeDialog} className={`${classPreFix}-mask`}></div>
         )
     }
 
@@ -70,15 +71,6 @@ class DialogContent extends React.Component{
         }
        
     }
-
-    static propTypes = {
-        showMask: PropTypes.bool
-    }
-
-    static defaultProps = {
-        showMask: true,
-    }
-
     componentWillMount(){
         this.setState(()=>{
             return {
@@ -86,11 +78,10 @@ class DialogContent extends React.Component{
             }
         });
     }
-   
     componentWillReceiveProps(nextProps){
         this.setState(()=>{
             return {
-                content: nextProps
+                content: nextProps.children
             }
         });
     }
@@ -110,28 +101,27 @@ class DialogContent extends React.Component{
 class DialogFooter extends React.Component{
     constructor(){
         super();
-        this.__cancelHandle  = this.__cancelHandle.bind(this);
-        this.__confirmHandle = this.__confirmHandle.bind(this);
+        this.cancelHandle  = this.cancelHandle.bind(this);
+        this.confirmHandle = this.confirmHandle.bind(this);
     }
     static defaultProps = {
         showFooterBtns: true
     }
     componentWillMount(){
-        
     }
-    __cancelHandle = (e) =>{
+    cancelHandle = (e) =>{
         this.props.cancel(e);
     }
-    __confirmHandle = () =>{
+    confirmHandle = () =>{
         
     }
-    __renderBtns = ()=>{
+    renderBtns = ()=>{
         if(this.props.buttons) {
             return this.props.buttons;
         }
         return (
             <div>
-                <button  key='cancel' onClick={this.__cancelHandle} >取消</button>
+                <button  key='cancel' onClick={this.cancelHandle} >取消</button>
                 <button  key='confirm' >确定</button>
             </div>
         )
@@ -139,7 +129,7 @@ class DialogFooter extends React.Component{
     render(){
         return (
             <footer className={`${classPreFix}-footer`}>
-                {this.__renderBtns()}
+                {this.renderBtns()}
             </footer>
         )
     }
@@ -154,7 +144,8 @@ class DialogFooter extends React.Component{
      constructor(){
          super();
          this.state = {
-            open: false
+            open: false,
+            display: 'block'
          }
          this._id = +new Date();
          this.eventHandle.bind(this)();
@@ -172,6 +163,7 @@ class DialogFooter extends React.Component{
         this.openDialog              = this.openDialog.bind(this);
         this.closeDialog             = this.closeDialog.bind(this);
         this.showDialog              = this.showDialog.bind(this);
+        this.setScreenFixed          = this.setScreenFixed.bind(this);
         this.getDialogContainer.bind(this)();
 
      }
@@ -197,14 +189,27 @@ class DialogFooter extends React.Component{
      }
      componentWillReceiveProps = (nextProps)=>{
         
+        //console.log(this.state.open, nextProps.open, '====');
        
         if(!this.props.open && nextProps.open){
-            //创建Dialog UI元素
+            
             this.openDialog();
         }else if(this.props.open && nextProps.open){
+            
+            this.showDialog();
+        }else if(!this.state.open && nextProps.open){
+            //this.openDialog();
+        }
+
+        let openDialogType;
+
+        if(!this.props.open && nextProps.open){
+            //创建Dialog UI元素
+            openDialogType = 'CREATE_DIALOG';
+        } else if(this.props.open && nextProps.open){
             //默认关闭Dialog只是设置{display: 'none'}
             //当再次打开时候只设置{display: 'block'}
-            this.showDialog();
+            openDialogType = 'DISPLAY_DIALOG';
         }
         
      }
@@ -251,12 +256,17 @@ class DialogFooter extends React.Component{
         //      buttons: PropTypes.array
         //  }
      }
+   
+     setScreenFixed = (isFixed)=>{
+        isFixed ? body.style.overflow = 'hidden' : body.style.overflow = '';
+     }
      getDialogContainer = ()=>{
          let container = document.createElement('div');
              container.id = 'J_portal_mount_node_'+this._id;
              this._portalNode = container;
      }
      createDialogHeaderElem = (headerConfig)=>{
+        if(headerConfig === undefined) return null;
         return (
             <DialogHeader
                 title = {
@@ -273,11 +283,12 @@ class DialogFooter extends React.Component{
             </DialogContent>
          )
      }
-     createDialogFooterElem = ()=>{
+     createDialogFooterElem = (footerConfig)=>{
+        if(footerConfig === undefined) return null;
         return (
             <DialogFooter
               cancel = {this.cancel}
-              buttons = {this.props.footerConfig.buttons}
+              buttons = {footerConfig.buttons}
             >
             </DialogFooter>
         )
@@ -285,7 +296,7 @@ class DialogFooter extends React.Component{
      createMaskElem = ()=>{
         return (
             this.state.open && this.props.showMask
-            ? <Mask closeDialog={this.closeDialog} />
+            ? <Mask quickClose={this.props.quickClose} closeDialog={this.closeDialog} />
             : null
         )
      }
@@ -297,15 +308,17 @@ class DialogFooter extends React.Component{
              }
          }, ()=>{
              DialogCollection.push(this);
+             this.setScreenFixed(true)
          });
      }
      closeDialog = (e)=>{
+        const {destory} = this.props;
         this.setState(()=>{
             return {
-                display: 'none'
+                [ destory ? 'open' : 'display' ]: destory ? false : 'none'
             }
         }, ()=>{
-            if(this.props.fixed) document.body.style.overflow = 'auto';
+            this.setScreenFixed(false)
         });
      }
      showDialog = (e)=>{
@@ -313,6 +326,8 @@ class DialogFooter extends React.Component{
              return {
                  display: 'block'
              }
+         }, ()=>{
+            this.setScreenFixed(true)
          });
      }
      cancel = (e) =>{
@@ -320,9 +335,10 @@ class DialogFooter extends React.Component{
         this.props.afterCancel();
      }
      onKeyDown = (e) =>{
-         alert(123);
-         if(e.keyCode !== KEY_CODE.ESC) return;
-         this.closeDialog(e);
+         
+        //  if(e.keyCode !== KEY_CODE.ESC) return;
+        
+        //  this.closeDialog(e);
      }
      render(){
          const cls = this.props.className ? `${classPreFix}-wrapper ` + this.props.className: `${classPreFix}-wrapper`;
@@ -332,23 +348,22 @@ class DialogFooter extends React.Component{
                      this.createMaskElem()
                  }
                  {
-                    //this.state.open
-                    //  ? <div onKeyDown={this.onKeyDown} className={`${classPreFix}`} >
-                    //         {
-                    //             this.createDialogHeaderElem(this.props.headerConfg)
-                    //         }
-                    //         {
-                    //             this.createDialogContentElem()
-                    //         }
-                    //         {
-                    //             this.createDialogFooterElem(this.props.footerConfig)
-                    //         }
+                    this.state.open
+                     ? <div className={`${classPreFix}`} >
+
+                            {
+                                this.createDialogHeaderElem(this.props.headerConfg)
+                            }
+                            {
+                                this.createDialogContentElem()
+                            }
+                            {
+                                this.createDialogFooterElem(this.props.footerConfig)
+                            }
                             
-                    //    </div>
-                    //  : null
-                     this.state.open
-                     ? <h3 onKeyDown={this.onKeyDown} >24234</h3>
+                       </div>
                      : null
+                   
                     
                  }
              </div>,

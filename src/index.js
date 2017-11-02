@@ -114,10 +114,10 @@ class Demo2 extends React.Component{
        return (
         <div>
             <button className='btn btn2' onClick={this.showDialog}>show dialog2</button>
-            <Dialog 
+            <Dialog
                afterCancel = {this.afterCancel}
                open = {this.state.open}
-               destory = {true}
+               quickClose = {false}
                fixed = {true}
                dialogStyle = {
                    {
@@ -136,14 +136,7 @@ class Demo2 extends React.Component{
                }
                
             >
-                <ul>
-                    <li>123213</li>
-                    <li>123213</li>
-                    <li>123213</li>
-                    <li>123213</li>
-                    <li>123213</li>
-                    <li>123213</li>
-                </ul>
+                loading...
             </Dialog>
          </div>
        )
@@ -155,7 +148,7 @@ class Demo3 extends React.Component{
     render(){
         return (
             <div>
-                <Demo />
+
                 <Demo2 />
             </div>
         )
