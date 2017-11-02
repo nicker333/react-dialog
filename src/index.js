@@ -100,9 +100,13 @@ class Demo2 extends React.Component{
     afterCancel(){
        // alert(123);
     }
+    confirm(){
+        alert(123);
+    }
     render(){
        /**
         * afterCancel  : 关闭弹窗后callback           type: function
+        * afterConfirm : 点击确定后的callback         type: function
         * open         : 是否打开Dialog               type: bool
         * destory      : 关闭弹窗是否销毁DOM           type: 
         * fixed        : 打开弹窗后是否允许页面滚动
@@ -116,8 +120,9 @@ class Demo2 extends React.Component{
             <button className='btn btn2' onClick={this.showDialog}>show dialog2</button>
             <Dialog
                afterCancel = {this.afterCancel}
+               confirm = {this.confirm}
                open = {this.state.open}
-               quickClose = {false}
+               quickClose = {true}
                fixed = {true}
                dialogStyle = {
                    {

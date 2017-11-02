@@ -4,9 +4,13 @@ import PropTypes from 'prop-types';
 
 const classPreFix = 'yy-dialog';
 const DialogCollection = [];
-const body = document.body;
+const BODY = document.body;
 const KEY_CODE = {
     ESC: 27
+}
+const OpenDialogType = {
+    'CREATE_DIALOG': 'CREATE_DIALOG',
+    'DISPLAY_DIALOG': 'DISPLAY_DIALOG'
 }
 const emptyFun = ()=>{};
 
@@ -112,8 +116,8 @@ class DialogFooter extends React.Component{
     cancelHandle = (e) =>{
         this.props.cancel(e);
     }
-    confirmHandle = () =>{
-        
+    confirmHandle = (e) =>{
+        this.props.confirm(e)
     }
     renderBtns = ()=>{
         if(this.props.buttons) {
@@ -122,7 +126,7 @@ class DialogFooter extends React.Component{
         return (
             <div>
                 <button  key='cancel' onClick={this.cancelHandle} >取消</button>
-                <button  key='confirm' >确定</button>
+                <button  key='confirm' onClick={this.confirmHandle} >确定</button>
             </div>
         )
     }
@@ -159,6 +163,7 @@ class DialogFooter extends React.Component{
         this.createDialogFooterElem  = this.createDialogFooterElem.bind(this);
         this.onKeyDown               = this.onKeyDown.bind(this);
         this.cancel                  = this.cancel.bind(this);
+        //this.confirm                 = this.confirm.bind(this);
 
         this.openDialog              = this.openDialog.bind(this);
         this.closeDialog             = this.closeDialog.bind(this);
@@ -168,50 +173,36 @@ class DialogFooter extends React.Component{
 
      }
      componentWillMount = ()=>{
-         
-        
+        this.setState(()=>{
+            return {
+                open: this.props.open
+            }
+        });
      }
      componentDidMount = ()=>{
         
-         //
-        //  document.on('touchmove', (e)=>{
-        //     e.preventDefault();
-        //  })
-        //  document.addEventListener('touchmove', (e)=>{
-        //      console.log(123);
-        //     e.preventDefault();
-        //  })
+    
      }
      componentWillUnmount = ()=>{
-         //console.log('un mount');
-        // this._portalNode
-        //this._portalNode.parentNode.removeChild(this._portalNode);
+        
      }
      componentWillReceiveProps = (nextProps)=>{
-        
-        //console.log(this.state.open, nextProps.open, '====');
-       
-        if(!this.props.open && nextProps.open){
-            
-            this.openDialog();
-        }else if(this.props.open && nextProps.open){
-            
-            this.showDialog();
-        }else if(!this.state.open && nextProps.open){
-            //this.openDialog();
-        }
+        let TYPE;
+        if(nextProps.open && !this.state.open ){
+            /**
+             * 创建Dialog UI元素
+             */
+            TYPE = 'CREATE_DIALOG';
+        } else if(nextProps.open && this.state.open ){
+            /**
+             *  默认关闭Dialog只是设置{display: 'none'}
+             *  当再次打开时候只设置{display: 'block'}
+             */
+            TYPE = 'DISPLAY_DIALOG';
+        } 
 
-        let openDialogType;
+        this.openDialog(TYPE);
 
-        if(!this.props.open && nextProps.open){
-            //创建Dialog UI元素
-            openDialogType = 'CREATE_DIALOG';
-        } else if(this.props.open && nextProps.open){
-            //默认关闭Dialog只是设置{display: 'none'}
-            //当再次打开时候只设置{display: 'block'}
-            openDialogType = 'DISPLAY_DIALOG';
-        }
-        
      }
 
      static defaultProps = {
@@ -221,8 +212,7 @@ class DialogFooter extends React.Component{
          afterDestroy   : emptyFun,
          open           : false,
          showMask       : true,
-         quickClose     : true,
-         classPreFix    : 'yy-dialog'
+         quickClose     : true
         //  headerConfg: {
         //      showHeader: true,
         //      title: '',
@@ -244,8 +234,7 @@ class DialogFooter extends React.Component{
          afterDestory   : PropTypes.func,
          open           : PropTypes.bool.isRequired,
          showMask       : PropTypes.bool,
-         quickClose     : PropTypes.bool,
-         classPreFix    : PropTypes.string
+         quickClose     : PropTypes.bool
         //  headerConfg: {
         //      showHeader: PropTypes.bool,
         //      title: PropTypes.string,
@@ -258,7 +247,7 @@ class DialogFooter extends React.Component{
      }
    
      setScreenFixed = (isFixed)=>{
-        isFixed ? body.style.overflow = 'hidden' : body.style.overflow = '';
+        isFixed ? BODY.style.overflow = 'hidden' : BODY.style.overflow = '';
      }
      getDialogContainer = ()=>{
          let container = document.createElement('div');
@@ -288,6 +277,7 @@ class DialogFooter extends React.Component{
         return (
             <DialogFooter
               cancel = {this.cancel}
+              confirm = {this.props.confirm}
               buttons = {footerConfig.buttons}
             >
             </DialogFooter>
@@ -300,16 +290,20 @@ class DialogFooter extends React.Component{
             : null
         )
      }
-     openDialog = () =>{
+     openDialog = (TYPE) =>{
+         let bool = TYPE === OpenDialogType.CREATE_DIALOG;
          this.setState(()=>{
-             document.body.appendChild(this._portalNode)
              return {
-                open: true
+                [ bool ? 'open' : 'display' ]: bool ? true : 'block'
              }
          }, ()=>{
-             DialogCollection.push(this);
+             if(bool){
+                BODY.appendChild(this._portalNode)
+                DialogCollection.push(this);
+             }
              this.setScreenFixed(true)
          });
+
      }
      closeDialog = (e)=>{
         const {destory} = this.props;
