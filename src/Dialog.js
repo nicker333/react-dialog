@@ -10,7 +10,9 @@ const KEY_CODE = {
 }
 const OpenDialogType = {
     'CREATE_DIALOG': 'CREATE_DIALOG',
-    'DISPLAY_DIALOG': 'DISPLAY_DIALOG'
+    'DISPLAY_DIALOG': 'DISPLAY_DIALOG',
+    'HIDE_DIALOG': 'HIDE_DIALOG',
+    'DESTORY_DIALOG': 'DESTORY_DIALOG'
 }
 const emptyFun = ()=>{};
 
@@ -54,10 +56,15 @@ class DialogHeader extends React.Component{
         this.props.closeDialog(e);
     }
     render(){
+        console.log(this.props, 'this props');
         return (
             <header className={`${classPreFix}-header`}>
-                <div>{this.props.title}</div>
-                <button className={`${classPreFix}-close-btn`} onClick={this.closeDialog} >x</button>
+                <strong>{this.props.headerConfig.title}</strong>
+                {
+                    this.props.headerConfig.showCloseBtn
+                    ? <button className={`${classPreFix}-close-btn`} onClick={this.closeDialog} >x</button>
+                    : null
+                }
             </header>
         )
     }
@@ -193,15 +200,24 @@ class DialogFooter extends React.Component{
              * 创建Dialog UI元素
              */
             TYPE = 'CREATE_DIALOG';
+            this.openDialog(TYPE);
         } else if(nextProps.open && this.state.open ){
             /**
              *  默认关闭Dialog只是设置{display: 'none'}
              *  当再次打开时候只设置{display: 'block'}
              */
             TYPE = 'DISPLAY_DIALOG';
-        } 
+            this.openDialog(TYPE);
+        } else if(!nextProps.open && this.state.open && !this.props.destory ){
+           
+            TYPE = 'HIDE_DIALOG';
+            this.closeDialog(TYPE);
+        } else if(!nextProps.open && this.state.open && this.props.destory) {
+            TYPE = 'DESTORY_DIALOG';
+            this.closeDialog(TYPE);
+        }
 
-        this.openDialog(TYPE);
+        
 
      }
 
@@ -212,12 +228,12 @@ class DialogFooter extends React.Component{
          afterDestroy   : emptyFun,
          open           : false,
          showMask       : true,
-         quickClose     : true
-        //  headerConfg: {
-        //      showHeader: true,
-        //      title: '',
-        //      showCloseBtn: true
-        //  },
+         quickClose     : true,
+         headerConfg: {
+             showHeader: true,
+             title: '',
+             showCloseBtn: true
+         }
         //  footerConfig: {
         //      showFooterBtns: true,
         //      buttons: [
@@ -255,12 +271,11 @@ class DialogFooter extends React.Component{
              this._portalNode = container;
      }
      createDialogHeaderElem = (headerConfig)=>{
+         console.log(headerConfig, 'headerconfig');
         if(headerConfig === undefined) return null;
         return (
             <DialogHeader
-                title = {
-                    headerConfig.title
-                }
+                headerConfig = {headerConfig}
                 closeDialog = {this.closeDialog}
             />  
         )
@@ -273,7 +288,6 @@ class DialogFooter extends React.Component{
          )
      }
      createDialogFooterElem = (footerConfig)=>{
-        if(footerConfig === undefined) return null;
         return (
             <DialogFooter
               cancel = {this.cancel}
@@ -291,13 +305,13 @@ class DialogFooter extends React.Component{
         )
      }
      openDialog = (TYPE) =>{
-         let bool = TYPE === OpenDialogType.CREATE_DIALOG;
+         let isCreateDialog = TYPE === 'CREATE_DIALOG';
          this.setState(()=>{
              return {
-                [ bool ? 'open' : 'display' ]: bool ? true : 'block'
+                [ isCreateDialog ? 'open' : 'display' ]: isCreateDialog ? true : 'block'
              }
          }, ()=>{
-             if(bool){
+             if(isCreateDialog){
                 BODY.appendChild(this._portalNode)
                 DialogCollection.push(this);
              }
@@ -305,11 +319,11 @@ class DialogFooter extends React.Component{
          });
 
      }
-     closeDialog = (e)=>{
-        const {destory} = this.props;
+     closeDialog = (TYPE)=>{
+        let isDestoryDialog = TYPE === 'DESTORY_DIALOG';
         this.setState(()=>{
             return {
-                [ destory ? 'open' : 'display' ]: destory ? false : 'none'
+                [ isDestoryDialog ? 'open' : 'display' ]: isDestoryDialog ? false : 'none'
             }
         }, ()=>{
             this.setScreenFixed(false)

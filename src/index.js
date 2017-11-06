@@ -60,9 +60,13 @@ class Demo extends React.Component{
                }
                footerConfig = {
                    {
-                      
+                      buttons: [
+                          <button>取消</button>,
+                          <button>取消</button>
+                      ]
                    }
                }
+              
                
             >
                 <ul>
@@ -85,10 +89,14 @@ class Demo2 extends React.Component{
     constructor(){
         super();
         this.state = {
-            open: false
+            open: false,
+            showCloseBtn: false
         }
         this.showDialog = this.showDialog.bind(this);
         this.afterCancel = this.afterCancel.bind(this);
+
+        this.cancel = this.cancel.bind(this);
+        this.comfirm = this.comfirm.bind(this);
     }
     showDialog(){
         this.setState((prevState)=>{
@@ -97,11 +105,27 @@ class Demo2 extends React.Component{
             }
         });
     }
+    cancel(){
+        this.setState(()=>{
+            return {
+                open: false
+            }
+        });
+    }
     afterCancel(){
        // alert(123);
     }
-    confirm(){
-        alert(123);
+    comfirm(){
+        //alert(123);
+       
+        // this.setState({
+        //     showCloseBtn: true
+        // })
+        this.setState(()=>{
+            return {
+                showCloseBtn: true
+            }
+        });
     }
     render(){
        /**
@@ -115,7 +139,9 @@ class Demo2 extends React.Component{
         *
         *
         */
+        let showCloseBtns = this.state.showCloseBtn;
        return (
+        
         <div>
             <button className='btn btn2' onClick={this.showDialog}>show dialog2</button>
             <Dialog
@@ -123,7 +149,7 @@ class Demo2 extends React.Component{
                confirm = {this.confirm}
                open = {this.state.open}
                quickClose = {true}
-               fixed = {true}
+               className = 'custorm-classname'
                dialogStyle = {
                    {
                        width: '500px'
@@ -131,17 +157,26 @@ class Demo2 extends React.Component{
                }
                headerConfg = {
                    {
-                       title: '标题'
+                       title: 'dialog title',
+                       showCloseBtn: this.state.showCloseBtn
                    }
                }
                footerConfig = {
                    {
-                      
+                        buttons: [
+                            <button onClick={this.cancel} key={'cancel'}>cancel</button>,
+                            <button  onClick={this.comfirm}  key={'confirm'}>confirm</button>
+                        ]
                    }
                }
                
             >
-                loading...
+                <ul>
+                    <li>24324234</li>
+                    <li>呵呵呵</li>
+                    <li>我曹</li>
+                    <li>牛逼</li>
+                </ul>
             </Dialog>
          </div>
        )
@@ -152,10 +187,7 @@ class Demo2 extends React.Component{
 class Demo3 extends React.Component{
     render(){
         return (
-            <div>
-
-                <Demo2 />
-            </div>
+            <Demo2 />
         )
     }
 }
