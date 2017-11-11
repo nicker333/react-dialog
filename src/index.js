@@ -7,82 +7,9 @@ import registerServiceWorker from './registerServiceWorker';
 
 
 
+import Dialog from './Dialog/index';
 
-import Dialog from './Dialog';
 
-class Demo extends React.Component{
-    constructor(){
-        super();
-        this.state = {
-            open: false
-        }
-        this.showDialog = this.showDialog.bind(this);
-        this.afterCancel = this.afterCancel.bind(this);
-    }
-    showDialog(){
-        this.setState((prevState)=>{
-            return {
-                open: true
-            }
-        });
-    }
-    afterCancel(){
-       // alert(123);
-    }
-    render(){
-       /**
-        * afterCancel  : 关闭弹窗后callback           type: function
-        * open         : 是否打开Dialog               type: bool
-        * destory      : 关闭弹窗是否销毁DOM           type: 
-        * fixed        : 打开弹窗后是否允许页面滚动
-        * headerConfg  : 弹窗header配置
-        * footerConfig : 弹窗footer配置
-        *
-        *
-        */
-       return (
-        <div>
-            <button className='btn' onClick={this.showDialog}>show dialog</button>
-            <Dialog 
-               afterCancel = {this.afterCancel}
-               open = {this.state.open}
-               destory = {true}
-               fixed = {true}
-               dialogStyle = {
-                   {
-                       width: '500px'
-                   }
-               }
-               headerConfg = {
-                   {
-                       title: '标题'
-                   }
-               }
-               footerConfig = {
-                   {
-                      buttons: [
-                          <button>取消</button>,
-                          <button>取消</button>
-                      ]
-                   }
-               }
-              
-               
-            >
-                <ul>
-                    <li>123213</li>
-                    <li>123213</li>
-                    <li>123213</li>
-                    <li>123213</li>
-                    <li>123213</li>
-                    <li>123213</li>
-                </ul>
-            </Dialog>
-         </div>
-       )
-       
-    }
-}
 
 
 class Demo2 extends React.Component{
@@ -174,6 +101,10 @@ class Demo2 extends React.Component{
                 <ul>
                     <li>24324234</li>
                     <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
                     <li>我曹</li>
                     <li>牛逼</li>
                 </ul>
@@ -184,15 +115,16 @@ class Demo2 extends React.Component{
     }
 }
 
+
 class Demo3 extends React.Component{
     render(){
         return (
-            <Demo2 />
+            <div>234</div>
         )
     }
 }
 ReactDOM.render(
-    <Demo3 />,
+    <Demo2 />,
     document.getElementById('root')
 );
 
