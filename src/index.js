@@ -77,6 +77,7 @@ class Demo2 extends React.Component{
                open = {this.state.open}
                quickClose = {true}
                className = 'custorm-classname'
+               destory = {true}
                dialogStyle = {
                    {
                        width: '500px'
@@ -90,15 +91,53 @@ class Demo2 extends React.Component{
                }
                footerConfig = {
                    {
-                        buttons: [
-                            <button onClick={this.cancel} key={'cancel'}>cancel</button>,
-                            <button  onClick={this.comfirm}  key={'confirm'}>confirm</button>
-                        ]
+                        cancelText: '取消',
+                        confirmText: '确定'
                    }
                }
                
             >
-                <ul>
+                <ul style={{height: '200px', overflow: 'scroll'}} >
+                    <li>24324234</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>我曹</li>
+                    <li>牛逼</li>
+                    <li>24324234</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>我曹</li>
+                    <li>牛逼</li>
+                    <li>24324234</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>我曹</li>
+                    <li>牛逼</li>
+                    <li>24324234</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>我曹</li>
+                    <li>牛逼</li>
+                    <li>24324234</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>呵呵呵</li>
+                    <li>我曹</li>
+                    <li>牛逼</li>
                     <li>24324234</li>
                     <li>呵呵呵</li>
                     <li>呵呵呵</li>

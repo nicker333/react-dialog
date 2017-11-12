@@ -156,6 +156,8 @@ class Dialog extends React.Component{
              cancel = {this.cancel}
              confirm = {this.props.confirm}
              buttons = {footerConfig.buttons}
+             cancelText = {footerConfig.cancelText}
+             confirmText = {footerConfig.confirmText}
              className = {`${CLASS_PRE_FIX}-footer`}
            >
            </DialogFooter>

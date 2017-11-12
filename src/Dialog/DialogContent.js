@@ -28,9 +28,9 @@ class DialogContent extends React.Component{
     }
     render = ()=>{
         return (
-            <section className={this.props.className}>
+            <div className={this.props.className}>
                 {this.state.content}
-            </section>
+            </div>
         )
     }
 }

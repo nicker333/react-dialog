@@ -13,7 +13,6 @@ class DialogFooter extends React.Component{
     static defaultProps = {
         showFooterBtns: true
     }
-    
     cancelHandle = (e)=>{
         this.props.cancel(e);
     }
@@ -26,16 +25,16 @@ class DialogFooter extends React.Component{
         }
         return (
             <div>
-                <button  key='cancel' onClick={this.cancelHandle} >取消</button>
-                <button  key='confirm' onClick={this.confirmHandle} >确定</button>
+                <button  key='cancel' onClick={this.cancelHandle} >{this.props.cancelText || 'cancel'}</button>
+                <button  key='confirm' onClick={this.confirmHandle} >{this.props.confirmText || 'ok'}</button>
             </div>
         )
     }
     render = ()=>{
         return (
-            <footer className={this.props.className}>
+            <div className={this.props.className}>
                 {this.renderBtns()}
-            </footer>
+            </div>
         )
     }
 }

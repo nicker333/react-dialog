@@ -17,14 +17,14 @@ class DialogHeader extends React.Component{
     }
     render(){
         return (
-            <header className={this.props.className}>
+            <div className={this.props.className}>
                 <strong>{this.props.headerConfig.title}</strong>
                 {
                     this.props.headerConfig.showCloseBtn
                     ? <button className={`${this.props.className}-close-btn`} onClick={this.closeDialog} >x</button>
                     : null
                 }
-            </header>
+            </div>
         )
     }
 }

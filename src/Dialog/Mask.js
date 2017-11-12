@@ -15,7 +15,7 @@ class Mask extends React.Component{
         this.props.closeDialog(e);
      }
      touchMoveHandler = (e)=>{
-         e.preventDefault();
+         //e.preventDefault();
      }
      render(){
          return (
