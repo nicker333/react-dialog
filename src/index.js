@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-consol.elog(111)
+dddconsol.elog(111)
 
 
 import Dialog from './Dialog/index';
